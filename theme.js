@@ -27,6 +27,6 @@ document.addEventListener("DOMContentLoaded", function () {
       last.nodeValue = chars.join("") + tail;
     }
   }
-  bind("p, li, summary, .d", 3);
+  bind("p, li, summary, .d, .figures span", 3);
   bind("h1, h2, h3, .t", 2);
 });
