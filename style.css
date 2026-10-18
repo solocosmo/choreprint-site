@@ -1,0 +1,569 @@
+/* Choreprint site: the app's blueprint sheet. Whiteprint by day, midnight graphite at night. */
+
+@font-face {
+  font-family: "Josefin Sans";
+  src: url("fonts/JosefinSans.ttf") format("truetype");
+  font-weight: 100 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Courier Prime";
+  src: url("fonts/CourierPrime-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Courier Prime";
+  src: url("fonts/CourierPrime-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-display: swap;
+}
+
+:root {
+  --bg: #EEF5FD;
+  --card: #FFFFFF;
+  --ink: #1F5FAE;
+  --title: #22303F;
+  /* Day colors that carry text are at least 4.5:1 on the page (WCAG AA), same as the app. */
+  --muted: #446EA8;
+  --line: #3A78C9;
+  --accent: #336DBA;
+  --grid-minor: rgba(58, 120, 201, 0.09);
+  --grid-major: rgba(58, 120, 201, 0.17);
+  --glass: rgba(220, 232, 247, 0.82);
+  --daily: #926400;
+  --weekly: #357A4D;
+  --everyday: #277784;
+  --anytime: #336DBA;
+  --special: #CA3527;
+  --timed: #7759C8;
+  --go: #297B4D;
+  --bezel: #1C2433;
+  --lift: 0 34px 60px -30px rgba(20, 50, 100, 0.5);
+  color-scheme: light;
+}
+
+:root[data-theme="night"] {
+  --bg: #0F1C30;
+  --card: #16294A;
+  --ink: #CFE2FF;
+  --title: #FFFFFF;
+  --muted: #A9B4C4;
+  --line: #7FB2FF;
+  --accent: #7FB2FF;
+  --grid-minor: rgba(127, 178, 255, 0.08);
+  --grid-major: rgba(127, 178, 255, 0.15);
+  --glass: rgba(22, 41, 74, 0.82);
+  --daily: #FFD166;
+  --weekly: #8FD9A8;
+  --everyday: #6FD3DF;
+  --anytime: #7FB2FF;
+  --special: #FF8A7A;
+  --timed: #BCA6FF;
+  --go: #7EE0A6;
+  --bezel: #04070D;
+  --lift: 0 34px 60px -26px rgba(0, 0, 0, 0.7);
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="day"]) {
+    --bg: #0F1C30;
+    --card: #16294A;
+    --ink: #CFE2FF;
+    --title: #FFFFFF;
+    --muted: #A9B4C4;
+    --line: #7FB2FF;
+    --accent: #7FB2FF;
+    --grid-minor: rgba(127, 178, 255, 0.08);
+    --grid-major: rgba(127, 178, 255, 0.15);
+    --glass: rgba(22, 41, 74, 0.82);
+    --daily: #FFD166;
+    --weekly: #8FD9A8;
+    --everyday: #6FD3DF;
+    --anytime: #7FB2FF;
+    --special: #FF8A7A;
+    --timed: #BCA6FF;
+    --go: #7EE0A6;
+    --bezel: #04070D;
+    --lift: 0 34px 60px -26px rgba(0, 0, 0, 0.7);
+    color-scheme: dark;
+  }
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: 96px; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+
+body {
+  margin: 0;
+  color: var(--ink);
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(var(--grid-major) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-major) 1px, transparent 1px),
+    linear-gradient(var(--grid-minor) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-minor) 1px, transparent 1px);
+  background-size: 60px 60px, 60px 60px, 12px 12px, 12px 12px;
+  font-family: "Josefin Sans", "Futura", "Avenir Next", sans-serif;
+  font-size: 18px;
+  line-height: 1.55;
+  min-height: 100vh;
+}
+
+p, li { text-wrap: pretty; }
+a { color: var(--ink); text-underline-offset: 3px; }
+a:hover { color: var(--title); }
+:focus-visible { outline: 2px solid var(--line); outline-offset: 3px; }
+
+.skip { position: absolute; left: -999px; top: 0; }
+.skip:focus { left: 12px; top: 12px; background: var(--card); padding: 8px 12px; z-index: 10; }
+
+/* Line icons, drawn in the current text color */
+.ico { width: 1em; height: 1em; flex: none; vertical-align: -0.125em; }
+
+/* Frosted glass header, like the app's */
+.top {
+  position: sticky; top: 0; z-index: 5;
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 45%, transparent);
+}
+.top .inner {
+  max-width: 1080px; margin: 0 auto; padding: 14px 20px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+}
+.wordmark {
+  font-weight: 600; letter-spacing: 0.24em; text-transform: uppercase;
+  text-decoration: none; color: var(--ink); font-size: 17px;
+}
+.top nav { display: flex; gap: 18px; flex-wrap: wrap; }
+.top nav a {
+  font-family: "Courier Prime", monospace; font-size: 14px; text-decoration: none;
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+.top nav a[aria-current="page"] { text-decoration: underline; text-decoration-thickness: 1.5px; }
+
+main { max-width: 1080px; margin: 0 auto; padding: 0 20px 8px; }
+
+.label {
+  font-family: "Josefin Sans", sans-serif; font-weight: 600; font-size: 14px;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted);
+}
+
+/* ---------- Shared pieces ---------- */
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 50px; padding: 0 24px;
+  font-family: "Josefin Sans", sans-serif; font-weight: 600; font-size: 16px; letter-spacing: 0.14em; text-transform: uppercase;
+  text-decoration: none; color: var(--bg); background: var(--accent);
+  border: 1.5px solid var(--accent); border-radius: 0;
+  box-shadow: inset 0 0 0 3px var(--accent), inset 0 0 0 4px color-mix(in srgb, var(--bg) 60%, transparent);
+  white-space: nowrap; cursor: pointer;
+}
+.btn:hover { color: var(--bg); filter: brightness(0.94); }
+.soon-chip {
+  font-family: "Courier Prime", monospace; font-size: 14px; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--muted); border: 1px dashed var(--muted); padding: 6px 10px;
+}
+
+/* Double-rule frame (the house drawing's frame) */
+.frame {
+  background: var(--card);
+  border: 1.2px solid var(--line);
+  box-shadow: inset 0 0 0 4px var(--card), inset 0 0 0 4.75px color-mix(in srgb, var(--line) 45%, transparent);
+  padding: 22px;
+}
+
+/* Crop-mark corners */
+.corners { position: relative; padding: 22px; background: color-mix(in srgb, var(--card) 85%, transparent); }
+.corners::before, .corners::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(var(--line), var(--line)) top left / 18px 1.5px no-repeat,
+    linear-gradient(var(--line), var(--line)) top left / 1.5px 18px no-repeat,
+    linear-gradient(var(--line), var(--line)) bottom right / 18px 1.5px no-repeat,
+    linear-gradient(var(--line), var(--line)) bottom right / 1.5px 18px no-repeat;
+}
+.corners::after {
+  background:
+    linear-gradient(var(--line), var(--line)) top right / 18px 1.5px no-repeat,
+    linear-gradient(var(--line), var(--line)) top right / 1.5px 18px no-repeat,
+    linear-gradient(var(--line), var(--line)) bottom left / 18px 1.5px no-repeat,
+    linear-gradient(var(--line), var(--line)) bottom left / 1.5px 18px no-repeat;
+}
+
+/* Tracing paper: see-through sheet with a dashed pencil outline */
+.tracing { border: 1.4px dashed var(--line); border-radius: 12px; background: color-mix(in srgb, var(--card) 55%, transparent); padding: 22px; }
+
+/* Doodles: tinted line art, like the app's margin sketches */
+.doodle {
+  display: block; flex: none; background: var(--line); opacity: 0.72;
+  -webkit-mask: var(--src) center / contain no-repeat; mask: var(--src) center / contain no-repeat;
+}
+
+/* Chore bubbles, outlined in each chore type's pencil color (same as the app's cards) */
+.bubble {
+  background: var(--card); border: 1.5px solid var(--c, var(--line)); border-radius: 16px;
+  padding: 14px 14px 14px 18px; display: flex; align-items: center; gap: 14px;
+}
+.bubble .grow { flex: 1; min-width: 0; }
+.bubble .t { font-weight: 600; font-size: 18px; line-height: 1.25; color: var(--title); }
+.bubble .d { margin-top: 4px; font-size: 16px; line-height: 1.4; color: var(--muted); }
+.tags { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-top: 8px; }
+.tag { display: inline-flex; align-items: center; gap: 5px; font-family: "Courier Prime", monospace; font-size: 13px; line-height: 1.2; color: var(--c, var(--line)); }
+.chip {
+  display: inline-block; font-family: "Courier Prime", monospace; font-size: 12px; line-height: 1.4; text-transform: uppercase;
+  color: var(--chip, var(--go)); border: 0.8px dashed color-mix(in srgb, var(--chip, var(--go)) 75%, transparent);
+  padding: 1px 6px; white-space: nowrap;
+}
+
+/* Money pill: a box with tick marks past each corner, like a dimensioned callout */
+.money {
+  position: relative; flex: none;
+  font-family: "Courier Prime", monospace; font-weight: 700; font-size: 19px; line-height: 1.3; color: var(--ink);
+  padding: 3px 9px; border: 1px solid var(--line); white-space: nowrap;
+}
+.money::before {
+  content: ""; position: absolute; inset: -5px; pointer-events: none;
+  background:
+    linear-gradient(var(--line), var(--line)) left 0 top 4px / 4px 1px no-repeat,
+    linear-gradient(var(--line), var(--line)) left 4px top 0 / 1px 4px no-repeat,
+    linear-gradient(var(--line), var(--line)) right 0 top 4px / 4px 1px no-repeat,
+    linear-gradient(var(--line), var(--line)) right 4px top 0 / 1px 4px no-repeat,
+    linear-gradient(var(--line), var(--line)) left 0 bottom 4px / 4px 1px no-repeat,
+    linear-gradient(var(--line), var(--line)) left 4px bottom 0 / 1px 4px no-repeat,
+    linear-gradient(var(--line), var(--line)) right 0 bottom 4px / 4px 1px no-repeat,
+    linear-gradient(var(--line), var(--line)) right 4px bottom 0 / 1px 4px no-repeat;
+}
+.rate { flex: none; display: grid; justify-items: end; gap: 4px; }
+.rate small { font-family: "Courier Prime", monospace; font-size: 12px; color: var(--muted); }
+
+/* App-style buttons for the little UI pieces */
+.btn-app {
+  display: inline-flex; align-items: center; justify-content: center; min-height: 42px; padding: 0 16px;
+  font-weight: 600; font-size: 14px; letter-spacing: 0.12em; text-transform: uppercase; white-space: nowrap;
+  color: var(--ink); background: var(--card); border: 1.5px solid var(--line);
+  box-shadow: inset 0 0 0 3px var(--card), inset 0 0 0 3.75px color-mix(in srgb, var(--line) 45%, transparent);
+}
+.btn-app.filled { color: var(--bg); background: var(--accent); box-shadow: inset 0 0 0 3px var(--accent), inset 0 0 0 4px color-mix(in srgb, var(--bg) 60%, transparent); }
+
+/* Green check list */
+.checks { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 28px; }
+.checks li { display: flex; gap: 12px; align-items: flex-start; color: var(--title); }
+.checks li > .ico {
+  width: 26px; height: 26px; padding: 4px; margin-top: -1px;
+  color: var(--go); border: 1.5px solid var(--go); border-radius: 50%;
+}
+.checks b { display: block; font-weight: 600; }
+.checks li span span { color: var(--muted); }
+
+/* ---------- Home ---------- */
+
+/* Section heading: detail callout bubble, caps title, and a rule, like a plan sheet */
+.sec-h {
+  display: flex; align-items: center; gap: 14px; margin: 84px 0 24px;
+  font-weight: 600; font-size: 15px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink);
+}
+.sec-h::after { content: ""; flex: 1; min-width: 24px; height: 1px; background: color-mix(in srgb, var(--line) 50%, transparent); }
+.callout {
+  position: relative; flex: none; width: 52px; height: 52px;
+  border: 1.5px solid var(--line); border-radius: 50%; background: var(--card);
+  font-family: "Courier Prime", monospace; letter-spacing: 0; color: var(--ink);
+}
+.callout::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; border-top: 1px solid var(--line); }
+.callout b { position: absolute; left: 0; right: 0; top: 7px; text-align: center; font-size: 17px; line-height: 1; }
+.callout i { position: absolute; left: 0; right: 0; bottom: 8px; text-align: center; font-style: normal; font-size: 11px; line-height: 1; color: var(--muted); }
+
+/* Hero */
+.hero {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: clamp(28px, 5vw, 72px);
+  align-items: center; padding: 60px 0 8px;
+}
+.hero h1 {
+  margin: 14px 0 0; font-weight: 600; font-size: clamp(42px, 6vw, 74px); line-height: 1.04;
+  color: var(--title); letter-spacing: -0.005em;
+}
+.hero h1 > span { display: block; }
+.hero h1 .paid { color: var(--line); }
+.nw { white-space: nowrap; }
+.scribble { position: relative; font-style: normal; white-space: nowrap; }
+.scribble::after {
+  content: ""; position: absolute; left: -2%; right: -3%; bottom: -0.16em; height: 0.26em;
+  background: currentColor; opacity: 0.8;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 14' preserveAspectRatio='none'%3E%3Cpath d='M3 9 C 40 4, 92 3, 132 6 S 186 10, 197 4' fill='none' stroke='black' stroke-width='3.2' stroke-linecap='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 14' preserveAspectRatio='none'%3E%3Cpath d='M3 9 C 40 4, 92 3, 132 6 S 186 10, 197 4' fill='none' stroke='black' stroke-width='3.2' stroke-linecap='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+}
+.hero .sub { margin: 26px 0 0; font-size: clamp(20px, 2.3vw, 25px); line-height: 1.35; color: var(--muted); }
+.cta-row { margin-top: 30px; display: flex; flex-wrap: wrap; gap: 12px 14px; align-items: center; }
+
+/* Phone mockup: drawn at real iPhone size in points, then zoomed down */
+.phone-wrap { justify-self: center; }
+.phone {
+  zoom: 0.64;
+  position: relative; width: 416px; height: 870px; padding: 13px; border-radius: 62px;
+  background: var(--bezel);
+  box-shadow: var(--lift), inset 0 0 0 2px color-mix(in srgb, var(--bezel) 65%, #8A9AB5);
+}
+.phone .screen {
+  position: relative; height: 100%; border-radius: 49px; overflow: hidden;
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(var(--grid-major) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-major) 1px, transparent 1px),
+    linear-gradient(var(--grid-minor) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-minor) 1px, transparent 1px);
+  background-size: 60px 60px, 60px 60px, 12px 12px, 12px 12px;
+  line-height: 1.3;
+}
+.phone .island { position: absolute; z-index: 3; top: 11px; left: 50%; width: 124px; height: 36px; margin-left: -62px; border-radius: 18px; background: #000; }
+.phone .glass {
+  position: relative; z-index: 2; background: var(--glass);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 35%, transparent);
+}
+.phone .status {
+  display: flex; justify-content: space-between; align-items: center; height: 56px; padding: 6px 34px 0 52px;
+  font: 600 17px/1 -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif; color: var(--title);
+}
+.phone .batt { position: relative; width: 26px; height: 13px; border: 1.5px solid currentColor; border-radius: 4px; }
+.phone .batt::before { content: ""; position: absolute; inset: 1.5px 6px 1.5px 1.5px; background: currentColor; border-radius: 1.5px; }
+.phone .batt::after { content: ""; position: absolute; right: -4.5px; top: 3px; width: 2px; height: 4px; background: currentColor; border-radius: 0 1px 1px 0; }
+.phone .nav { display: flex; justify-content: space-between; align-items: center; padding: 4px 16px 12px; color: var(--ink); font-size: 17px; }
+.phone .nav .back { display: inline-flex; align-items: center; gap: 2px; }
+.phone .nav .ttl { font-weight: 600; font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; }
+.phone .nav .ico { width: 22px; height: 22px; }
+.phone .body { display: grid; gap: 12px; padding: 16px; }
+.phone .hello { display: flex; align-items: center; gap: 12px; }
+.phone .av { width: 48px; height: 48px; border-radius: 50%; background: var(--av); color: #fff; display: grid; place-items: center; }
+.phone .av .ico { width: 24px; height: 24px; }
+.phone .hi { font-size: 22px; font-weight: 600; color: var(--ink); }
+.phone .bal { font-size: 16px; color: var(--ink); margin-top: 2px; }
+.phone .hello .doodle { width: 46px; height: 80px; margin: -6px 10px -6px auto; transform: rotate(6deg); }
+.phone .ph {
+  display: flex; align-items: center; gap: 8px; padding-top: 12px; white-space: nowrap;
+  color: var(--c); font-weight: 600; font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase;
+}
+.phone .ph .ico { width: 15px; height: 15px; }
+.phone .ph::after { content: ""; order: 2; flex: 1; height: 1px; background: color-mix(in srgb, var(--c) 50%, transparent); }
+.phone .ph .chev { order: 3; width: 12px; height: 12px; }
+.phone .home-ind { position: absolute; z-index: 3; bottom: 9px; left: 50%; width: 136px; height: 5px; margin-left: -68px; border-radius: 3px; background: var(--title); opacity: 0.85; }
+
+/* Three figures, like dimensions on a drawing */
+.figures { margin-top: 64px; padding: 8px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.figures > div { display: flex; align-items: center; gap: 18px; padding: 18px 22px; }
+.figures > div + div { border-left: 1px dashed color-mix(in srgb, var(--line) 55%, transparent); }
+.figures b { font-weight: 600; font-size: 66px; line-height: 0.8; color: var(--line); padding-top: 0.12em; }
+.figures span { font-size: 17px; line-height: 1.35; color: var(--title); }
+
+/* How it works */
+.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 18px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.step { display: flex; flex-direction: column; gap: 14px; padding: 26px 24px 24px; }
+.step .n {
+  width: 40px; height: 40px; border: 1.5px solid var(--line); border-radius: 50%;
+  display: grid; place-items: center; font-family: "Courier Prime", monospace; font-weight: 700; font-size: 18px; color: var(--ink);
+}
+.step h3 { margin: 0; font-weight: 600; font-size: 23px; line-height: 1.2; color: var(--title); }
+.step p { margin: 6px 0 0; font-size: 17px; line-height: 1.45; color: var(--muted); }
+.step .mini { margin-top: auto; padding-top: 8px; }
+.flow { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+.flow > .ico { width: 20px; height: 20px; color: var(--muted); }
+.wallet-mini { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px 14px; }
+.wallet-mini .label { display: block; font-size: 12px; }
+.wallet-mini b { font-family: "Courier Prime", monospace; font-size: 28px; line-height: 1.1; color: var(--ink); }
+
+/* Six kinds of chores */
+.kinds { display: grid; gap: 14px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.kinds .bubble { align-items: flex-start; padding-top: 16px; padding-bottom: 16px; }
+.kinds .tag { margin-bottom: 8px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em; }
+
+/* Made for real families */
+.fam { display: grid; gap: 18px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.fam-card { display: flex; flex-direction: column; gap: 22px; padding: 26px 24px; }
+.fam-card .vis { min-height: 156px; display: flex; flex-direction: column; justify-content: center; }
+.fam-card h3 { margin: 0; font-weight: 600; font-size: 22px; line-height: 1.2; color: var(--title); }
+.fam-card p { margin: 6px 0 0; font-size: 17px; line-height: 1.45; color: var(--muted); }
+.names { display: grid; gap: 10px; }
+.names > div {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 10px;
+  border-bottom: 1px dashed color-mix(in srgb, var(--line) 45%, transparent);
+  font-family: "Courier Prime", monospace; font-size: 14px; color: var(--muted);
+}
+.names > div:last-child { border-bottom: 0; padding-bottom: 0; }
+.names b {
+  font-family: "Josefin Sans", sans-serif; font-weight: 600; font-size: 18px; color: var(--title);
+  padding: 3px 14px 1px; border: 1.5px solid var(--line); border-radius: 999px; background: var(--card);
+}
+.req { display: grid; gap: 14px; }
+.req-row { display: flex; align-items: center; gap: 12px; }
+.req-row .who { flex: 1; min-width: 0; font-size: 16px; line-height: 1.3; color: var(--muted); }
+.req-row .who b { display: block; font-weight: 600; font-size: 18px; color: var(--ink); }
+.dot { width: 38px; height: 38px; border-radius: 50%; background: var(--av); color: #fff; display: grid; place-items: center; flex: none; }
+.dot .ico { width: 19px; height: 19px; }
+.req .flow .btn-app { flex: 1 1 0; }
+
+/* Folder tabs (the wallet's history) */
+.folder-tabs { display: flex; gap: 8px; padding-left: 14px; }
+.folder-tabs span {
+  font-weight: 600; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase;
+  padding: 7px 12px 5px; border: 1.5px solid color-mix(in srgb, var(--line) 45%, transparent); border-bottom: 0;
+  border-radius: 10px 10px 0 0; color: var(--muted); background: color-mix(in srgb, var(--bg) 60%, transparent);
+}
+.folder-tabs span.on { color: var(--accent); border-color: var(--line); background: var(--bg); padding-top: 9px; position: relative; top: 1.5px; }
+.folder { border: 1.5px solid var(--line); border-radius: 14px; background: var(--bg); padding: 4px 12px 12px; }
+.folder .row { display: flex; justify-content: space-between; gap: 10px; padding: 9px 12px; border: 1.4px dashed var(--line); border-radius: 12px; margin-top: 8px; }
+.folder .row b { font-weight: 400; font-size: 16px; color: var(--title); }
+.folder .row span { font-family: "Courier Prime", monospace; font-weight: 700; }
+
+/* Privacy promise */
+.promise { margin-top: 84px; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 34px; align-items: center; padding: 34px 36px; }
+.promise > .doodle { width: 128px; height: 144px; }
+.promise h2 { margin: 0 0 20px; font-weight: 600; font-size: clamp(25px, 3.1vw, 34px); line-height: 1.15; color: var(--title); }
+.more {
+  display: inline-flex; align-items: center; gap: 8px; margin-top: 24px;
+  font-weight: 600; font-size: 14px; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none;
+}
+.more:hover { text-decoration: underline; }
+.more .ico { width: 18px; height: 18px; }
+
+/* Contact band */
+.cta-band { margin-top: 28px; display: flex; align-items: center; flex-wrap: wrap; gap: 18px 28px; padding: 26px 32px; }
+.cta-band > .doodle { width: 76px; height: 82px; }
+.cta-band .txt { flex: 1 1 240px; }
+.cta-band h2 { margin: 0; font-weight: 600; font-size: 26px; line-height: 1.2; color: var(--title); }
+.cta-band p { margin: 4px 0 0; color: var(--muted); }
+
+/* ---------- Policy and support sheets ---------- */
+
+.doc-head { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 14px 32px; padding: 56px 0 4px; }
+.doc-head .label { margin: 0; }
+.doc-head h1 {
+  margin: 8px 0 0; font-weight: 600; font-size: clamp(34px, 5.4vw, 54px); line-height: 1.05;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink);
+}
+.eff {
+  margin: 0 0 6px; font-family: "Courier Prime", monospace; font-size: 14px; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--muted); border: 1px dashed var(--muted); padding: 6px 10px;
+}
+.doc-lede { margin: 18px 0 0; max-width: 40em; font-size: 20px; color: var(--muted); }
+
+/* The short version, with paper clips resting on the sheet */
+.tldr { position: relative; margin-top: 44px; padding: 30px clamp(20px, 4vw, 40px); }
+.tldr > h2 { margin: 0 0 22px; }
+.tldr .checks li { font-size: 18px; line-height: 1.4; }
+.tldr .checks li span span { display: block; margin-top: 2px; font-size: 16px; }
+.clip { position: absolute; top: -40px; right: clamp(16px, 4vw, 44px); width: 104px; height: auto; transform: rotate(-8deg); filter: drop-shadow(4px 7px 5px rgba(0, 0, 0, 0.28)); pointer-events: none; }
+
+.doc-grid { margin-top: 48px; display: grid; grid-template-columns: 236px minmax(0, 1fr); gap: 44px; align-items: start; }
+.toc { position: sticky; top: 92px; }
+.toc .label { margin: 0 0 12px; }
+.toc ol { list-style: none; margin: 0; padding: 0; counter-reset: toc; border-left: 1px solid color-mix(in srgb, var(--line) 45%, transparent); }
+.toc li { counter-increment: toc; }
+.toc a { display: flex; gap: 10px; padding: 6px 12px; font-size: 16px; line-height: 1.3; color: var(--muted); text-decoration: none; }
+.toc a::before { content: counter(toc, decimal-leading-zero); padding-top: 1px; font-family: "Courier Prime", monospace; font-size: 13px; color: var(--accent); }
+.toc a:hover { color: var(--title); background: color-mix(in srgb, var(--card) 70%, transparent); }
+
+.sections { display: grid; gap: 16px; counter-reset: sec; }
+.card {
+  counter-increment: sec; background: var(--card);
+  border: 1.2px solid color-mix(in srgb, var(--line) 75%, transparent); padding: 24px 28px;
+}
+.card > h2 { display: flex; align-items: center; gap: 14px; margin: 0 0 4px; font-weight: 600; font-size: 22px; line-height: 1.25; color: var(--title); }
+.card > h2::before {
+  content: counter(sec, decimal-leading-zero); flex: none; padding: 2px 6px 1px;
+  font-family: "Courier Prime", monospace; font-weight: 700; font-size: 14px; line-height: 1.2; color: var(--accent); border: 1px solid var(--line);
+}
+.card p, .card li { font-size: 17px; line-height: 1.55; color: var(--title); }
+.card p { margin: 10px 0 0; }
+.card ul { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 8px; }
+.card ul li { position: relative; padding-left: 24px; }
+.card ul li::before { content: ""; position: absolute; left: 3px; top: 0.5em; width: 7px; height: 7px; border: 1.5px solid var(--line); }
+.note {
+  display: flex; gap: 12px; align-items: flex-start; margin-top: 14px !important; padding: 12px 16px;
+  border: 1.4px dashed var(--special); border-radius: 12px; background: color-mix(in srgb, var(--special) 6%, transparent);
+}
+.note .ico { width: 22px; height: 22px; margin-top: 1px; color: var(--special); }
+
+/* Support: questions fold open like the app's question bubbles */
+.faq { max-width: 860px; }
+.faq-head .doodle { width: 64px; height: 108px; margin-bottom: 4px; }
+.faq-group { margin-top: 44px; }
+.faq-group > h2 { display: flex; align-items: center; gap: 12px; margin: 0 0 4px; }
+.faq-group > h2::after { content: ""; flex: 1; height: 1px; background: color-mix(in srgb, var(--line) 45%, transparent); }
+.qa { margin-top: 12px; border: 1.4px dashed var(--line); border-radius: 12px; background: color-mix(in srgb, var(--card) 55%, transparent); }
+.qa[open] { background: var(--card); }
+.qa summary {
+  list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 18px;
+  padding: 16px 18px 16px 20px; font-weight: 600; font-size: 19px; line-height: 1.3; color: var(--title);
+}
+.qa summary::-webkit-details-marker { display: none; }
+.qa summary .pm {
+  flex: none; width: 28px; height: 28px; border: 1.5px solid var(--line); border-radius: 50%;
+  display: grid; place-items: center; color: var(--line); transition: transform 0.2s ease;
+}
+.qa summary .pm .ico { width: 14px; height: 14px; }
+.qa[open] summary .pm { transform: rotate(45deg); }
+.qa .a { padding: 0 20px 18px; }
+.qa .a p { margin: 0; max-width: 42em; font-size: 17px; line-height: 1.55; color: var(--title); }
+
+/* Footer: title block, with the cat sitting on it */
+footer { position: relative; max-width: 1080px; margin: 0 auto; padding: 96px 20px 48px; }
+.footer-cat { position: absolute; right: 64px; top: 21px; width: 84px; height: 79px; }
+.titleblock { display: grid; grid-template-columns: 140px minmax(0, 1fr); border: 1.2px solid var(--line); background: color-mix(in srgb, var(--card) 70%, transparent); font-family: "Courier Prime", monospace; font-size: 14px; }
+.titleblock div { padding: 8px 10px; border-bottom: 0.75px solid color-mix(in srgb, var(--line) 50%, transparent); }
+.titleblock div:nth-child(odd) { color: var(--muted); border-right: 0.75px solid color-mix(in srgb, var(--line) 50%, transparent); }
+.titleblock div:nth-last-child(-n+2) { border-bottom: 0; }
+.titleblock a { text-decoration: none; margin-right: 14px; display: inline-block; }
+.titleblock a:hover { text-decoration: underline; }
+
+/* ---------- Narrower screens ---------- */
+
+@media (max-width: 979px) {
+  .steps { grid-template-columns: 1fr; }
+  .step { display: grid; grid-template-columns: auto minmax(0, 1fr) minmax(0, 250px); align-items: center; gap: 12px 22px; }
+  .step .mini { margin: 0; padding: 0; }
+  .kinds { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .fam { grid-template-columns: 1fr; }
+  .fam-card { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: 28px; }
+  .fam-card .txt { order: -1; }
+  .fam-card .vis { min-height: 0; }
+  .doc-grid { grid-template-columns: minmax(0, 1fr); gap: 22px; }
+  .toc { position: static; }
+  .toc ol { border-left: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .toc a { padding: 5px 12px 4px; font-size: 15px; border: 1px solid color-mix(in srgb, var(--line) 45%, transparent); border-radius: 999px; background: color-mix(in srgb, var(--card) 70%, transparent); }
+}
+@media (max-width: 739px) {
+  .hero { grid-template-columns: minmax(0, 1fr); padding-top: 44px; }
+  .phone { zoom: 0.6; }
+  .figures { grid-template-columns: 1fr; }
+  .figures > div + div { border-left: 0; border-top: 1px dashed color-mix(in srgb, var(--line) 55%, transparent); }
+  .figures b { min-width: 1.1ch; text-align: center; }
+  .promise { grid-template-columns: 1fr; gap: 18px; padding: 26px 22px; }
+  .promise > .doodle { width: 86px; height: 98px; }
+  .checks { grid-template-columns: 1fr; }
+}
+@media (max-width: 639px) {
+  .kinds { grid-template-columns: 1fr; }
+  .fam-card { grid-template-columns: 1fr; }
+  .fam-card .txt { order: 0; }
+  .step { grid-template-columns: auto minmax(0, 1fr); align-items: start; gap: 14px 18px; }
+  .step .mini { grid-column: 1 / -1; }
+  .card { padding: 20px; }
+  .cta-band { padding: 22px; }
+}
+@media (max-width: 520px) {
+  body { font-size: 17px; }
+  /* Each half of the headline stays on one line, even on the smallest phones. */
+  .hero h1 { font-size: min(42px, calc((100vw - 32px) / 8.9)); }
+  .top .inner { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .sec-h { margin-top: 64px; }
+  .titleblock { grid-template-columns: 92px minmax(0, 1fr); }
+  .footer-cat { right: 28px; }
+}
+
+/* The smallest phones (320 points): shrink the phone drawing a little more so nothing runs off the side. */
+@media (max-width: 359px) {
+  .phone { zoom: 0.52; }
+}
