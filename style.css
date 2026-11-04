@@ -165,10 +165,9 @@ main { max-width: 1080px; margin: 0 auto; padding: 0 20px 8px; }
   white-space: nowrap; cursor: pointer;
 }
 .btn:hover { color: var(--bg); filter: brightness(0.94); }
-.soon-chip {
-  font-family: "Courier Prime", monospace; font-size: 14px; text-transform: uppercase; letter-spacing: 0.06em;
-  color: var(--muted); border: 1px dashed var(--muted); padding: 6px 10px;
-}
+/* Apple's own "Download on the App Store" badge, shown as Apple supplies it */
+.store-badge { display: inline-flex; line-height: 0; }
+.store-badge img { display: block; height: 50px; width: auto; }
 
 /* Double-rule frame (the house drawing's frame) */
 .frame {
